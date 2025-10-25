@@ -8,8 +8,8 @@ from app.database import Base, engine, get_db
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Visa Transaction Simulator",
-    description="Simulates Visa-like payment authorization workflow.",
+    title="Payment Transaction Simulator",
+    description="Simulates a card-network payment authorization workflow.",
     version="0.1.0",
 )
 
@@ -66,4 +66,3 @@ def read_transaction(
 def read_stats(db: Session = Depends(get_db)) -> schemas.StatsResponse:
     metrics = utils.calculate_stats(db)
     return schemas.StatsResponse(**metrics)
-

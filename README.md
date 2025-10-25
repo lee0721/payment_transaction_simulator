@@ -1,8 +1,8 @@
-# 💳 Visa Transaction Simulator
+# 💳 Payment Transaction Simulator
 
-Simulates a simplified Visa-style payment authorization workflow using FastAPI, SQLite, and Docker. The service accepts payment requests, performs a fraud heuristic, persists the outcome, and exposes rich query and statistics endpoints.
+Simulates a simplified payment-network authorization workflow using FastAPI, SQLite, and Docker. The service accepts payment requests, performs a fraud heuristic, persists the outcome, and exposes rich query and statistics endpoints.
 
-> Built to showcase REST API design, SQL/ORM usage, fraud detection logic, Dockerization, and documentation polish that align with Visa's Graduate Software Engineer expectations.
+> Built to showcase REST API design, SQL/ORM usage, fraud detection logic, Dockerization, and documentation polish. Inspired by Visa's Graduate Software Engineer expectations, but adaptable to any card network.
 
 ---
 
@@ -46,8 +46,8 @@ Client (Swagger UI / curl / Postman)
 ## ▶️ Quick Start
 
 ```bash
-git clone https://github.com/<your-username>/visa_transaction_simulator.git
-cd visa_transaction_simulator
+git clone https://github.com/<your-username>/payment_transaction_simulator.git
+cd payment_transaction_simulator
 python -m venv .venv && source .venv/bin/activate   # optional
 pip install -r requirements.txt
 uvicorn app.main:app --reload
@@ -60,8 +60,8 @@ Now open http://127.0.0.1:8000/docs for interactive Swagger UI.
 ## 🐳 Docker Workflow
 
 ```bash
-docker build -t visa-transaction-simulator .
-docker run -p 8080:8080 visa-transaction-simulator
+docker build -t payment-transaction-simulator .
+docker run -p 8080:8080 payment-transaction-simulator
 ```
 
 Visit http://127.0.0.1:8080/docs to explore the API inside the container.
@@ -170,9 +170,9 @@ curl http://127.0.0.1:8000/stats
 
 ---
 
-## 📊 JD Alignment Highlights
+## 📊 Industry Alignment Highlights
 - **Single development lifecycle** – Covers design, build, validation, documentation, and containerization.
-- **Tech coverage** – Python (akin to Visa-listed languages), REST, SQL, Docker, Unix shell, data validation.
+- **Tech coverage** – Python (akin to card-network stacks such as Visa/Mastercard), REST, SQL, Docker, Unix shell, data validation.
 - **Support readiness** – `/stats` endpoint and clear logging hooks shorten time-to-debug.
 - **Problem solving** – Fraud heuristic demonstrates risk thinking with pathways for future ML/analytics integration.
 - **Collaboration-ready** – Modular app structure, well-documented API, and Docker workflow for seamless handoff.
@@ -189,4 +189,3 @@ curl http://127.0.0.1:8000/stats
 
 ## 📄 License
 MIT – feel free to adapt for your own learning and interviews.
-

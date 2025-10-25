@@ -1,4 +1,3 @@
 """
-Visa Transaction Simulator package.
+Payment Transaction Simulator package.
 """
-
