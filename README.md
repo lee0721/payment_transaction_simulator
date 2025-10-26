@@ -76,6 +76,8 @@ Or open http://127.0.0.1:8080/demo for the frontend walkthrough served from the 
 ---
 
 ## 🖥️ Visual Demo Walkthrough
+![Interactive Demo](assets/demo.gif)
+
 - **Submit Payment** – form-driven experience that populates the API request and surfaces the JSON result inline.
 - **Inspect Transaction** – auto-fills the most recent transaction ID for quick lookups.
 - **Monitor Stats** – pulls live aggregates to underline observability and support readiness.

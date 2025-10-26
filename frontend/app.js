@@ -53,7 +53,7 @@ lookupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const id = transactionIdInput.value.trim();
   if (!id) {
-    renderError(transactionResult, { message: "請先輸入 transaction_id" });
+    renderError(transactionResult, { message: "Please enter a transaction_id first." });
     return;
   }
 
@@ -90,7 +90,9 @@ const refreshStats = async () => {
 statsRefresh.addEventListener("click", refreshStats);
 
 resetButton?.addEventListener("click", async () => {
-  const confirmed = window.confirm("確定要清除所有模擬交易紀錄嗎？此動作無法復原。");
+  const confirmed = window.confirm(
+    "Confirm reset? This clears all simulated transactions and cannot be undone."
+  );
   if (!confirmed) {
     return;
   }
