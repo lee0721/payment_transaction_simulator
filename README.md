@@ -13,6 +13,7 @@ Simulates a simplified payment-network authorization workflow using FastAPI, SQL
 - Randomized fraud logic with amount-aware thresholds.
 - Auto-generated Swagger UI (`/docs`) & ReDoc (`/redoc`).
 - Dark-mode guided UI at `/demo` so non-technical reviewers can explore the workflow without curl.
+- `/admin/reset` endpoint (and UI button) to clear demo data instantly.
 - SQLite persistence via SQLAlchemy; easy to swap for Postgres/Mongo.
 - Docker-ready deployment for reproducible demos.
 
@@ -79,6 +80,7 @@ Or open http://127.0.0.1:8080/demo for the frontend walkthrough served from the 
 - **Inspect Transaction** – auto-fills the most recent transaction ID for quick lookups.
 - **Monitor Stats** – pulls live aggregates to underline observability and support readiness.
 - Crafted with vanilla JS + CSS to keep dependencies light while showcasing UI polish (dark theme, responsive layout).
+- One-click "Clear Demo Data" control wired to `/admin/reset` for testing or presentation resets.
 
 ---
 
@@ -180,6 +182,9 @@ curl http://127.0.0.1:8000/transaction/<transaction_id>
 
 # View stats
 curl http://127.0.0.1:8000/stats
+
+# Reset demo state
+curl -X DELETE http://127.0.0.1:8000/admin/reset
 ```
 
 ---

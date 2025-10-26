@@ -44,16 +44,21 @@ header nav {
   gap: 1rem;
 }
 
-header nav a {
+header nav a,
+header nav .link-button {
   color: #67e8f9;
   text-decoration: none;
   border: 1px solid rgba(103, 232, 249, 0.4);
   padding: 0.5rem 1.2rem;
   border-radius: 999px;
   transition: transform 0.15s ease, border-color 0.15s ease;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
 }
 
-header nav a:hover {
+header nav a:hover,
+header nav .link-button:hover {
   transform: translateY(-1px);
   border-color: rgba(103, 232, 249, 0.8);
 }

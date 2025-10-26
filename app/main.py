@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app import schemas, models, utils
-from app.database import Base, engine, get_db
+from app.database import Base, engine, get_db, SessionLocal
 
 
 Base.metadata.create_all(bind=engine)
@@ -113,3 +113,17 @@ def read_transaction(
 def read_stats(db: Session = Depends(get_db)) -> schemas.StatsResponse:
     metrics = utils.calculate_stats(db)
     return schemas.StatsResponse(**metrics)
+
+
+@app.delete(
+    "/admin/reset",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete all transactions and reset metrics",
+)
+def reset_transactions() -> None:
+    """
+    Clear all persisted transactions. Intended for demo reset or test automation.
+    """
+    with SessionLocal() as session:
+        session.query(models.Transaction).delete()
+        session.commit()

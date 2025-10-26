@@ -7,6 +7,7 @@ const lookupForm = document.getElementById("lookup-form");
 const transactionResult = document.getElementById("transaction-result");
 const statsResult = document.getElementById("stats-result");
 const statsRefresh = document.getElementById("stats-refresh");
+const resetButton = document.getElementById("reset-button");
 
 const renderJSON = (element, data) => {
   element.textContent = JSON.stringify(data, null, 2);
@@ -87,6 +88,25 @@ const refreshStats = async () => {
 };
 
 statsRefresh.addEventListener("click", refreshStats);
+
+resetButton?.addEventListener("click", async () => {
+  const confirmed = window.confirm("確定要清除所有模擬交易紀錄嗎？此動作無法復原。");
+  if (!confirmed) {
+    return;
+  }
+  try {
+    const response = await fetch(`${API_BASE}/admin/reset`, { method: "DELETE" });
+    if (!response.ok) {
+      throw new Error("Reset failed");
+    }
+    renderJSON(paymentResult, { status: "Cleared – ready for new demo" });
+    renderJSON(transactionResult, { status: "No lookup yet." });
+    transactionIdInput.value = "";
+    await refreshStats();
+  } catch (error) {
+    renderError(statsResult, error);
+  }
+});
 
 // bootstrap view
 refreshStats();
