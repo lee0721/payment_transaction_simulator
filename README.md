@@ -190,4 +190,4 @@ curl http://127.0.0.1:8000/stats
 ---
 
 ## 📄 License
-MIT – feel free to adapt for your own learning and interviews.
+Released under the MIT License. See `LICENSE` for details.
