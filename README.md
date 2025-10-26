@@ -2,7 +2,7 @@
 
 Simulates a simplified payment-network authorization workflow using FastAPI, SQLite, and Docker. The service accepts payment requests, performs a fraud heuristic, persists the outcome, and exposes rich query and statistics endpoints.
 
-> Built to showcase REST API design, SQL/ORM usage, fraud detection logic, Dockerization, and documentation polish. Inspired by Visa's Graduate Software Engineer expectations, but adaptable to any card network.
+> Built to showcase REST API design, SQL/ORM usage, fraud detection logic, Dockerization, and documentation polish for modern payment platforms.
 
 ---
 
@@ -186,7 +186,7 @@ curl http://127.0.0.1:8000/stats
 
 ## 📊 Industry Alignment Highlights
 - **Single development lifecycle** – Covers design, build, validation, documentation, and containerization.
-- **Tech coverage** – Python (akin to card-network stacks such as Visa/Mastercard), REST, SQL, Docker, Unix shell, data validation.
+- **Tech coverage** – Python, REST, SQL, Docker, Unix shell, data validation — core capabilities for payment-processing teams.
 - **Support readiness** – `/stats` endpoint and clear logging hooks shorten time-to-debug.
 - **Problem solving** – Fraud heuristic demonstrates risk thinking with pathways for future ML/analytics integration.
 - **Collaboration-ready** – Modular app structure, well-documented API, and Docker workflow for seamless handoff.

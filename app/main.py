@@ -47,7 +47,7 @@ def landing() -> str:
         <article>
           <h1>Payment Transaction Simulator</h1>
           <p>
-            Explore a Visa-inspired payment authorization workflow implemented with FastAPI,
+            Explore a payment authorization workflow implemented with FastAPI,
             SQLite, and Docker. Choose how you want to experience the service:
           </p>
           <div>
