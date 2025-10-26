@@ -96,13 +96,15 @@ resetButton?.addEventListener("click", async () => {
   }
   try {
     const response = await fetch(`${API_BASE}/admin/reset`, { method: "DELETE" });
+    const data = await response.json();
     if (!response.ok) {
-      throw new Error("Reset failed");
+      renderError(statsResult, data);
+      return;
     }
     renderJSON(paymentResult, { status: "Cleared – ready for new demo" });
     renderJSON(transactionResult, { status: "No lookup yet." });
     transactionIdInput.value = "";
-    await refreshStats();
+    renderJSON(statsResult, data);
   } catch (error) {
     renderError(statsResult, error);
   }

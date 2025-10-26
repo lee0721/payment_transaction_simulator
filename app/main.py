@@ -117,13 +117,16 @@ def read_stats(db: Session = Depends(get_db)) -> schemas.StatsResponse:
 
 @app.delete(
     "/admin/reset",
-    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=schemas.StatsResponse,
     summary="Delete all transactions and reset metrics",
 )
-def reset_transactions() -> None:
+def reset_transactions() -> schemas.StatsResponse:
     """
     Clear all persisted transactions. Intended for demo reset or test automation.
     """
     with SessionLocal() as session:
         session.query(models.Transaction).delete()
         session.commit()
+    with SessionLocal() as session:
+        metrics = utils.calculate_stats(session)
+    return schemas.StatsResponse(**metrics)

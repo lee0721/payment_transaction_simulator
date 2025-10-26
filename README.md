@@ -13,7 +13,7 @@ Simulates a simplified payment-network authorization workflow using FastAPI, SQL
 - Randomized fraud logic with amount-aware thresholds.
 - Auto-generated Swagger UI (`/docs`) & ReDoc (`/redoc`).
 - Dark-mode guided UI at `/demo` so non-technical reviewers can explore the workflow without curl.
-- `/admin/reset` endpoint (and UI button) to clear demo data instantly.
+- `/admin/reset` endpoint (returns zeroed stats) with UI button for instant demo resets.
 - SQLite persistence via SQLAlchemy; easy to swap for Postgres/Mongo.
 - Docker-ready deployment for reproducible demos.
 
