@@ -50,10 +50,12 @@ git clone https://github.com/<your-username>/payment_transaction_simulator.git
 cd payment_transaction_simulator
 python -m venv .venv && source .venv/bin/activate   # optional
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 Now open http://127.0.0.1:8000/docs for interactive Swagger UI.
+
+> 💡 If your shell cannot find `python`/`uvicorn`, invoke the binaries directly via `./.venv/bin/python -m uvicorn app.main:app --reload`.
 
 ---
 
