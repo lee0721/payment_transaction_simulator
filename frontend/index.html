@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Transaction Simulator Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Payment Transaction Simulator</h1>
+      <p>
+        Interactive walkthrough of the FastAPI backend — submit payments, review transaction
+        details, and inspect system stats. Designed to highlight competencies requested in the
+        Visa Graduate Software Engineer JD: REST APIs, fraud logic, SQL persistence, and DevOps
+        tooling.
+      </p>
+      <nav>
+        <a href="/docs" target="_blank" rel="noopener">Swagger Docs</a>
+        <a href="https://github.com/lee0721/payment_transaction_simulator" target="_blank" rel="noopener">
+          GitHub Repo
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="payment-section">
+        <h2>1. Submit Payment</h2>
+        <form id="payment-form">
+          <label>
+            Card Number
+            <input id="card-number" name="card_number" placeholder="4000001234567890" required />
+          </label>
+          <label>
+            Amount (GBP)
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="150.75"
+              required
+            />
+          </label>
+          <label>
+            Merchant
+            <input id="merchant" name="merchant" placeholder="Amazon" required />
+          </label>
+          <button type="submit">Simulate Authorization</button>
+        </form>
+        <div class="panel">
+          <h3>Authorization Result</h3>
+          <pre id="payment-result">Awaiting submission…</pre>
+        </div>
+      </section>
+
+      <section id="transaction-section">
+        <h2>2. Inspect Transaction</h2>
+        <form id="lookup-form">
+          <label>
+            Transaction ID
+            <input
+              id="transaction-id"
+              name="transaction_id"
+              placeholder="Paste an ID returned from step 1"
+              required
+            />
+          </label>
+          <button type="submit">Fetch Details</button>
+        </form>
+        <div class="panel">
+          <h3>Transaction Snapshot</h3>
+          <pre id="transaction-result">No lookup yet.</pre>
+        </div>
+      </section>
+
+      <section id="stats-section">
+        <h2>3. Platform Metrics</h2>
+        <p class="caption">
+          Aggregates illustrate the supportability and observability hooks a production ops team
+          would expect.
+        </p>
+        <button id="stats-refresh" type="button">Refresh Metrics</button>
+        <div class="panel">
+          <h3>Current Stats</h3>
+          <pre id="stats-result">Loading…</pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Built with FastAPI · SQLite · Docker · Vanilla JS — aligning with Visa's graduate program
+        focus on end-to-end development lifecycle.
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

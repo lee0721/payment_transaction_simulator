@@ -12,6 +12,7 @@ Simulates a simplified payment-network authorization workflow using FastAPI, SQL
 - **GET `/stats`** – Observe live metrics: totals, approval ratio, and average ticket size.
 - Randomized fraud logic with amount-aware thresholds.
 - Auto-generated Swagger UI (`/docs`) & ReDoc (`/redoc`).
+- Dark-mode guided UI at `/demo` so non-technical reviewers can explore the workflow without curl.
 - SQLite persistence via SQLAlchemy; easy to swap for Postgres/Mongo.
 - Docker-ready deployment for reproducible demos.
 
@@ -28,14 +29,15 @@ Simulates a simplified payment-network authorization workflow using FastAPI, SQL
 
 ## 🧭 Architecture at a Glance
 ```
-Client (Swagger UI / curl / Postman)
+Client (Demo UI / Swagger / curl)
         |
         v
   FastAPI Application (app/main.py)
    ├─ Schemas (app/schemas.py)      # Request/response validation
    ├─ Models  (app/models.py)       # SQLAlchemy ORM entities
    ├─ Database (app/database.py)    # SQLite engine & sessions
-   └─ Utils   (app/utils.py)        # Fraud heuristic & stats
+   ├─ Utils   (app/utils.py)        # Fraud heuristic & stats
+   └─ Static Demo (frontend/)       # Dark-mode walkthrough for non-engineers
         |
         v
       SQLite (transactions.db)
@@ -53,7 +55,7 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --reload
 ```
 
-Now open http://127.0.0.1:8000/docs for interactive Swagger UI.
+Now open http://127.0.0.1:8000/docs for interactive Swagger UI, or http://127.0.0.1:8000/demo for the guided visual experience.
 
 > 💡 If your shell cannot find `python`/`uvicorn`, invoke the binaries directly via `./.venv/bin/python -m uvicorn app.main:app --reload`.
 
@@ -67,6 +69,16 @@ docker run -p 8080:8080 payment-transaction-simulator
 ```
 
 Visit http://127.0.0.1:8080/docs to explore the API inside the container.
+
+Or open http://127.0.0.1:8080/demo for the frontend walkthrough served from the same container.
+
+---
+
+## 🖥️ Visual Demo Walkthrough
+- **Submit Payment** – form-driven experience that populates the API request and surfaces the JSON result inline.
+- **Inspect Transaction** – auto-fills the most recent transaction ID for quick lookups.
+- **Monitor Stats** – pulls live aggregates to underline observability and support readiness.
+- Crafted with vanilla JS + CSS to keep dependencies light while showcasing UI polish (dark theme, responsive layout).
 
 ---
 
