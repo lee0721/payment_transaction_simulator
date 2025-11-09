@@ -3,10 +3,13 @@ from pathlib import Path
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import schemas, models, utils
 from app.database import Base, engine, get_db, SessionLocal
+from app.dependencies import get_audit_service, get_scoring_service
+from app.services import AuditService, ScoringService
 
 
 Base.metadata.create_all(bind=engine)
@@ -15,6 +18,17 @@ app = FastAPI(
     title="Payment Transaction Simulator",
     description="Simulates a card-network payment authorization workflow.",
     version="0.1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
@@ -68,12 +82,15 @@ def landing() -> str:
     summary="Submit a simulated payment request",
 )
 def create_payment(
-    payload: schemas.PaymentRequest, db: Session = Depends(get_db)
+    payload: schemas.PaymentRequest,
+    db: Session = Depends(get_db),
+    scoring_service: ScoringService = Depends(get_scoring_service),
+    audit_service: AuditService = Depends(get_audit_service),
 ) -> schemas.PaymentResponse:
     """
     Accept a payment request, perform fraud checks, persist, and return the result.
     """
-    decision = utils.evaluate_transaction(payload.amount)
+    decision = scoring_service.evaluate(payload)
     transaction = models.Transaction.from_payment(
         payload=payload,
         status=decision.status,
@@ -82,9 +99,21 @@ def create_payment(
     db.add(transaction)
     db.commit()
     db.refresh(transaction)
+    audit_service.record(
+        db,
+        schemas.DecisionAuditCreate(
+            transaction_id=transaction.id,
+            request_payload=payload.model_dump(),
+            decision_payload=decision,
+        ),
+    )
     return schemas.PaymentResponse(
         transaction_id=transaction.id,
         status=transaction.status,
+        decision_reason=decision.reason,
+        score=decision.score,
+        latency_ms=decision.latency_ms,
+        features=decision.features,
     )
 
 
@@ -113,6 +142,25 @@ def read_transaction(
 def read_stats(db: Session = Depends(get_db)) -> schemas.StatsResponse:
     metrics = utils.calculate_stats(db)
     return schemas.StatsResponse(**metrics)
+
+
+@app.get(
+    "/audit/{transaction_id}",
+    response_model=list[schemas.DecisionAuditResponse],
+    summary="Retrieve audit logs for a transaction",
+)
+def read_audit_logs(
+    transaction_id: str,
+    db: Session = Depends(get_db),
+    audit_service: AuditService = Depends(get_audit_service),
+) -> list[schemas.DecisionAuditResponse]:
+    audits = audit_service.fetch_by_transaction(db, transaction_id)
+    if not audits:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Audit logs not found for this transaction.",
+        )
+    return audit_service.to_schema(audits)
 
 
 @app.delete(

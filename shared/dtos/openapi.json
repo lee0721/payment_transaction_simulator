@@ -1,0 +1,562 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Payment Transaction Simulator",
+    "description": "Simulates a card-network payment authorization workflow.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/payment": {
+      "post": {
+        "summary": "Submit a simulated payment request",
+        "description": "Accept a payment request, perform fraud checks, persist, and return the result.",
+        "operationId": "create_payment_payment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transaction/{transaction_id}": {
+      "get": {
+        "summary": "Retrieve a transaction by id",
+        "operationId": "read_transaction_transaction__transaction_id__get",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transaction Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "summary": "Retrieve system processing statistics",
+        "operationId": "read_stats_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit/{transaction_id}": {
+      "get": {
+        "summary": "Retrieve audit logs for a transaction",
+        "operationId": "read_audit_logs_audit__transaction_id__get",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Transaction Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DecisionAuditResponse"
+                  },
+                  "title": "Response Read Audit Logs Audit  Transaction Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/reset": {
+      "delete": {
+        "summary": "Delete all transactions and reset metrics",
+        "description": "Clear all persisted transactions. Intended for demo reset or test automation.",
+        "operationId": "reset_transactions_admin_reset_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DecisionAuditResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "transaction_id": {
+            "type": "string",
+            "title": "Transaction Id"
+          },
+          "request_payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Request Payload"
+          },
+          "decision_payload": {
+            "$ref": "#/components/schemas/RiskDecision"
+          },
+          "latency_ms": {
+            "type": "number",
+            "title": "Latency Ms"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "transaction_id",
+          "request_payload",
+          "decision_payload",
+          "latency_ms",
+          "created_at"
+        ],
+        "title": "DecisionAuditResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PaymentRequest": {
+        "properties": {
+          "card_number": {
+            "type": "string",
+            "maxLength": 19,
+            "minLength": 12,
+            "title": "Card Number",
+            "description": "Primary account number used for the simulated transaction."
+          },
+          "amount": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount",
+            "description": "Transaction amount in the default currency."
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Currency",
+            "description": "ISO 4217 currency code. Default: GBP.",
+            "default": "GBP"
+          },
+          "merchant": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Merchant",
+            "description": "Merchant name for the transaction."
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel",
+            "description": "Channel descriptor (e.g., ecommerce, in-store).",
+            "default": "ecommerce"
+          },
+          "device_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Id",
+            "description": "Device fingerprint or ID associated with the transaction."
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_number",
+          "amount",
+          "merchant"
+        ],
+        "title": "PaymentRequest"
+      },
+      "PaymentResponse": {
+        "properties": {
+          "transaction_id": {
+            "type": "string",
+            "title": "Transaction Id",
+            "description": "Unique identifier for the transaction."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Authorization result for the transaction."
+          },
+          "decision_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Reason",
+            "description": "Short reason describing why the decision was made."
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score",
+            "description": "Risk score included for demo purposes."
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms",
+            "description": "Latency reported by the scoring service."
+          },
+          "features": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TransactionFeatures"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Feature snapshot used during scoring."
+          }
+        },
+        "type": "object",
+        "required": [
+          "transaction_id",
+          "status"
+        ],
+        "title": "PaymentResponse"
+      },
+      "RiskDecision": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Authorization result for the transaction."
+          },
+          "score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "description": "Normalized risk score (0-1)."
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Explanation for the risk decision."
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "description": "End-to-end scoring latency in milliseconds."
+          },
+          "features": {
+            "$ref": "#/components/schemas/TransactionFeatures"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "score",
+          "latency_ms",
+          "features"
+        ],
+        "title": "RiskDecision"
+      },
+      "StatsResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "approved": {
+            "type": "integer",
+            "title": "Approved"
+          },
+          "declined": {
+            "type": "integer",
+            "title": "Declined"
+          },
+          "approval_rate": {
+            "type": "number",
+            "title": "Approval Rate"
+          },
+          "avg_amount": {
+            "type": "number",
+            "title": "Avg Amount"
+          },
+          "p95_latency": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P95 Latency",
+            "description": "Placeholder for latency metrics once worker aggregation is implemented."
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "approved",
+          "declined",
+          "approval_rate",
+          "avg_amount"
+        ],
+        "title": "StatsResponse"
+      },
+      "TransactionFeatures": {
+        "properties": {
+          "spending_velocity": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Spending Velocity",
+            "description": "Normalized velocity score."
+          },
+          "device_trust_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Device Trust Score",
+            "description": "Device reputation score."
+          },
+          "ip_risk_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Ip Risk Score",
+            "description": "IP risk score."
+          }
+        },
+        "type": "object",
+        "required": [
+          "spending_velocity",
+          "device_trust_score",
+          "ip_risk_score"
+        ],
+        "title": "TransactionFeatures"
+      },
+      "TransactionResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "card_last4": {
+            "type": "string",
+            "title": "Card Last4"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount"
+          },
+          "merchant": {
+            "type": "string",
+            "title": "Merchant"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "risk_flag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Flag"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "card_last4",
+          "amount",
+          "merchant",
+          "status",
+          "created_at"
+        ],
+        "title": "TransactionResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

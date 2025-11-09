@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, Float, String
+from sqlalchemy import Column, DateTime, Float, JSON, String
 
 from app.database import Base
 
@@ -32,3 +32,14 @@ class Transaction(Base):
             status=status,
             risk_flag=risk_flag,
         )
+
+
+class DecisionAudit(Base):
+    __tablename__ = "decision_audits"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    transaction_id = Column(String, nullable=False, index=True)
+    request_payload = Column(JSON, nullable=False)
+    decision_payload = Column(JSON, nullable=False)
+    latency_ms = Column(Float, nullable=False, default=0.0)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
