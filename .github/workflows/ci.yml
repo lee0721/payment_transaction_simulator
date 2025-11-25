@@ -60,6 +60,13 @@ jobs:
           cache: "npm"
       - name: Install Playwright deps
         run: npm install
+      - name: Build frontend for API mount
+        working-directory: frontend-app
+        env:
+          VITE_API_BASE: http://localhost:8000
+        run: |
+          npm ci
+          npm run build
       - name: Launch stack
         run: docker compose up -d --build
       - name: Install browsers
