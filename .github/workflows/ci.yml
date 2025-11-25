@@ -20,7 +20,7 @@ jobs:
       - name: Lint
         run: ruff check .
       - name: Pytest
-        run: pytest
+        run: PYTHONPATH=. pytest tests
 
   frontend:
     runs-on: ubuntu-latest
