@@ -82,7 +82,10 @@ class TransactionResponse(BaseModel):
     id: str
     card_last4: str
     amount: float
+    currency: str
     merchant: str
+    channel: Optional[str] = None
+    device_id: Optional[str] = None
     status: str
     risk_flag: Optional[str] = None
     created_at: datetime
@@ -93,7 +96,10 @@ class TransactionResponse(BaseModel):
             id=transaction.id,
             card_last4=transaction.card_number[-4:],
             amount=transaction.amount,
+            currency=getattr(transaction, "currency", "GBP"),
             merchant=transaction.merchant,
+            channel=getattr(transaction, "channel", None),
+            device_id=getattr(transaction, "device_id", None),
             status=transaction.status,
             risk_flag=getattr(transaction, "risk_flag", None),
             created_at=transaction.created_at,
@@ -108,7 +114,7 @@ class StatsResponse(BaseModel):
     avg_amount: float
     p95_latency: Optional[float] = Field(
         default=None,
-        description="Placeholder for latency metrics once worker aggregation is implemented.",
+        description="P95 scoring latency derived from decision audit logs.",
     )
 
 
@@ -145,7 +151,10 @@ if TYPE_CHECKING:  # pragma: no cover - typing helper
         id: str
         card_number: str
         amount: float
+        currency: str
         merchant: str
+        channel: Optional[str]
+        device_id: Optional[str]
         status: str
         risk_flag: Optional[str]
         created_at: datetime

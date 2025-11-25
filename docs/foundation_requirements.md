@@ -1,10 +1,10 @@
 # RiskOps Demo Stack – Foundation & Requirements
 
 ## 1. Current Baseline Audit
-- **FastAPI monolith**: `app/main.py` serves `/payment`, `/transaction/{id}`, `/stats`, `/admin/reset`, and mounts `frontend/` at `/demo`. All reads/writes flow through a single FastAPI process backed by SQLite.
+- **FastAPI monolith**: `app/main.py` serves `/payment`, `/transaction/{id}`, `/stats`, `/admin/reset`, and mounts the built `frontend-app/dist` React experience at `/demo`. All reads/writes flow through a single FastAPI process backed by SQLite.
 - **Data layer**: The `Transaction` ORM (UUID, card number, amount, merchant, status, risk flag, timestamps) is powered by SQLAlchemy 2.0 + SQLite with tables created via `Base.metadata.create_all`.
 - **Risk logic**: `app/utils.py` provides a lightweight, amount-driven heuristic with randomness. No external feature store, queue, or asynchronous processing exists yet.
-- **Frontend**: Vanilla JS/CSS UI hosted from the backend container lets users submit payments, fetch transaction details, and view stats without any build tooling.
+- **Frontend**: React/Vite UI (served via standalone dev server or the bundled `frontend-app/dist` assets) lets users submit payments, fetch transaction details, and view stats without depending on the backend container for build tooling.
 - **DevOps posture**: A single `Dockerfile` builds the app, but there is no Docker Compose definition, seed data process, CI/CD workflow, observability integration, or browser regression suite. Redis/Postgres/worker components are not implemented.
 
 ## 2. Data Models & Contracts

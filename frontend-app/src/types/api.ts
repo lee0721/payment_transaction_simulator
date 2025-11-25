@@ -29,7 +29,10 @@ export interface TransactionResponse {
   id: string;
   card_last4: string;
   amount: number;
+  currency: string;
   merchant: string;
+  channel?: string | null;
+  device_id?: string | null;
   status: string;
   risk_flag?: string | null;
   created_at: string;

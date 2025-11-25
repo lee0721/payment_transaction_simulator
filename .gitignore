@@ -10,3 +10,8 @@ venv/
 *.DS_Store
 transactions.db
 *.mov
+frontend-app/node_modules/
+frontend-app/dist/
+.env
+node_modules/
+playwright-report/

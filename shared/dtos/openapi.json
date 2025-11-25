@@ -6,6 +6,31 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Monitoring"
+        ],
+        "summary": "Health check",
+        "operationId": "healthcheck_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Healthcheck Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/payment": {
       "post": {
         "summary": "Submit a simulated payment request",
@@ -429,7 +454,7 @@
               }
             ],
             "title": "P95 Latency",
-            "description": "Placeholder for latency metrics once worker aggregation is implemented."
+            "description": "P95 scoring latency derived from decision audit logs."
           }
         },
         "type": "object",
@@ -488,9 +513,35 @@
             "type": "number",
             "title": "Amount"
           },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
           "merchant": {
             "type": "string",
             "title": "Merchant"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "device_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Id"
           },
           "status": {
             "type": "string",
@@ -518,6 +569,7 @@
           "id",
           "card_last4",
           "amount",
+          "currency",
           "merchant",
           "status",
           "created_at"

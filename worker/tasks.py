@@ -31,6 +31,7 @@ def seed_synthetic_transactions(batch_size: int = 5) -> Sequence[str]:
                 merchant=f"Demo Merchant {idx + 1}",
                 currency="GBP",
                 channel="worker-seed",
+                device_id=f"seed-device-{idx:02d}",
             )
             decision = scoring_service.evaluate(payload)
             transaction = models.Transaction.from_payment(
@@ -40,6 +41,14 @@ def seed_synthetic_transactions(batch_size: int = 5) -> Sequence[str]:
             )
             session.add(transaction)
             session.flush()
+            session.add(
+                models.DecisionAudit(
+                    transaction_id=transaction.id,
+                    request_payload=payload.model_dump(),
+                    decision_payload=decision.model_dump(),
+                    latency_ms=decision.latency_ms,
+                )
+            )
             created_ids.append(transaction.id)
         session.commit()
     return created_ids

@@ -25,16 +25,18 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:4173",
+        "http://127.0.0.1:4173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+FRONTEND_BUILD_DIR = Path(__file__).resolve().parent.parent / "frontend-app" / "dist"
 
-if FRONTEND_DIR.exists():
-    app.mount("/demo", StaticFiles(directory=FRONTEND_DIR, html=True), name="demo")
+if FRONTEND_BUILD_DIR.exists():
+    app.mount("/demo", StaticFiles(directory=FRONTEND_BUILD_DIR, html=True), name="demo")
 
 
 @app.get("/", include_in_schema=False, response_class=HTMLResponse)
@@ -62,7 +64,7 @@ def landing() -> str:
           <h1>Payment Transaction Simulator</h1>
           <p>
             Explore a payment authorization workflow implemented with FastAPI,
-            SQLite, and Docker. Choose how you want to experience the service:
+            Postgres/Redis, and Docker. Choose how you want to experience the service:
           </p>
           <div>
             <a href="/docs">Interactive API Docs</a>
@@ -73,6 +75,11 @@ def landing() -> str:
       </body>
     </html>
     """
+
+
+@app.get("/health", summary="Health check", tags=["Monitoring"])
+def healthcheck() -> dict[str, str]:
+    return {"status": "ok"}
 
 
 @app.post(
@@ -173,6 +180,7 @@ def reset_transactions() -> schemas.StatsResponse:
     Clear all persisted transactions. Intended for demo reset or test automation.
     """
     with SessionLocal() as session:
+        session.query(models.DecisionAudit).delete()
         session.query(models.Transaction).delete()
         session.commit()
     with SessionLocal() as session:

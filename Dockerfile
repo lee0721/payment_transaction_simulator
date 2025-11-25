@@ -9,7 +9,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./app ./app
-COPY ./frontend ./frontend
+COPY ./worker ./worker
+COPY ./scripts ./scripts
+COPY ./frontend-app/dist ./frontend-app/dist
+COPY ./shared ./shared
 
 EXPOSE 8080
 

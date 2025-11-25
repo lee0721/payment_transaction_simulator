@@ -207,7 +207,9 @@ function App() {
           </form>
           <div className="panel">
             <h3>Decision result</h3>
-            <pre>{paymentResult ? JSON.stringify(paymentResult, null, 2) : "Awaiting submission."}</pre>
+            <pre data-testid="decision-result">
+              {paymentResult ? JSON.stringify(paymentResult, null, 2) : "Awaiting submission."}
+            </pre>
           </div>
         </section>
 
@@ -229,13 +231,13 @@ function App() {
           </form>
           <div className="panel">
             <h3>Transaction record</h3>
-            <pre>
+            <pre data-testid="transaction-record">
               {transactionResult ? JSON.stringify(transactionResult, null, 2) : "No lookup yet."}
             </pre>
           </div>
           <div className="panel">
             <h3>Audit trail</h3>
-            <pre>
+            <pre data-testid="audit-trail">
               {audits.length
                 ? JSON.stringify(audits, null, 2)
                 : loading.audits
@@ -253,7 +255,9 @@ function App() {
           </button>
           <div className="panel">
             <h3>Current stats</h3>
-            <pre>{stats ? JSON.stringify(stats, null, 2) : "Gathering stats…"}</pre>
+            <pre data-testid="stats-panel">
+              {stats ? JSON.stringify(stats, null, 2) : "Gathering stats…"}
+            </pre>
           </div>
         </section>
       </main>

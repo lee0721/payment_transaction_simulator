@@ -4,7 +4,7 @@ Application configuration powered by environment variables.
 
 from functools import lru_cache
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -21,10 +21,11 @@ class Settings(BaseSettings):
     high_amount_decline_rate: float = 0.30
     random_decline_rate: float = 0.10
 
-    model_config = {
-        "env_file": ".env",
-        "env_file_encoding": "utf-8",
-    }
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
 
 @lru_cache

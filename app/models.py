@@ -16,7 +16,10 @@ class Transaction(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     card_number = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
+    currency = Column(String(3), nullable=False, default="GBP")
     merchant = Column(String, nullable=False)
+    channel = Column(String, nullable=True)
+    device_id = Column(String, nullable=True)
     status = Column(String, nullable=False)
     risk_flag = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -28,7 +31,10 @@ class Transaction(Base):
         return cls(
             card_number=payload.card_number,
             amount=payload.amount,
+            currency=payload.currency,
             merchant=payload.merchant,
+            channel=payload.channel,
+            device_id=payload.device_id,
             status=status,
             risk_flag=risk_flag,
         )
