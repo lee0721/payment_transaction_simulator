@@ -42,6 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare env file
+        run: cp .env.example .env
       - name: Validate docker compose file
         run: docker compose config
 
@@ -50,6 +52,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare env file
+        run: cp .env.example .env
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
