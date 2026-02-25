@@ -279,6 +279,27 @@ curl -X DELETE http://127.0.0.1:8000/admin/reset
 
 ---
 
+## 📈 Measured Results (Local Run)
+- Measurement date: **February 25, 2026**
+- Runtime: Docker Compose stack (`api`, `worker`, `db`, `redis`, `frontend`) on local machine.
+- Data load: `docker compose run --rm --build seed python scripts/seed_demo_data.py --batch-size 1000`
+- `/stats` snapshot after seeding:
+  - `total`: **1028**
+  - `approved`: **818**
+  - `declined`: **210**
+  - `approval_rate`: **0.7957** (79.57%)
+  - `avg_amount`: **490.29**
+  - `p95_latency`: **0.19 ms** (scoring latency from decision audit logs)
+
+To reproduce exactly 1000 transactions (clean baseline):
+```bash
+curl -X DELETE http://localhost:8000/admin/reset
+docker compose run --rm --build seed python scripts/seed_demo_data.py --batch-size 1000
+curl http://localhost:8000/stats
+```
+
+---
+
 ## 🔄 CI/CD Automation
 - `.github/workflows/ci.yml` runs linting (`ruff`), `pytest`, frontend build, `docker compose config`, and headless Playwright tests on every push/pull request.
 - `Jenkinsfile` mirrors the same pipeline stages for self-hosted agents (Python lint/test → frontend build → compose validation → Playwright E2E).
